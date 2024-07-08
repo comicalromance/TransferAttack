@@ -1,12 +1,14 @@
 import torch
 import torchvision.models as models
 import torchvision.transforms as transforms
+from .xception_detector import XceptionDetector
 
 from PIL import Image
 import numpy as np
 import pandas as pd
 import timm
 import os
+import yaml
 
 img_height, img_width = 224, 224
 img_max, img_min = 1., 0
@@ -31,6 +33,15 @@ def load_pretrained_model(cnn_model=[], vit_model=[]):
     for model_name in vit_model:
         yield model_name, timm.create_model(model_name, pretrained=True)
 
+def load_xception():
+    with open('./transferattack/xception.yaml', 'r') as f:
+        config = yaml.safe_load(f)
+
+    model = XceptionDetector(config)
+    ckpt = torch.load(config['weights_path'])
+    model.load_state_dict(ckpt, strict=True)
+    print('===> Load checkpoint done!')
+    return model
 
 def wrap_model(model):
     """

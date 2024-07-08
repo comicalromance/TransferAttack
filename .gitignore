@@ -1,0 +1,6 @@
+new_data
+results/*
+test/*
+*.pyc
+videos/*
+dlib_tools/*.dat 

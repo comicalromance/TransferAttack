@@ -1,0 +1,7 @@
+python main.py --input_dir ../../datasets/UADFV/fake/frames_aug/0037_fake --output_dir results --attack mifgsm
+
+ffmpeg -r 30 -i ./results/%03d.png -crf 0 -c:v libx264 -vf "fps=30" ./videos/output.mp4 [-pix_fmt yuv420p]
+
+need to use crf 1 for it to be displayable on powerpoint
+
+ffmpeg -r 30 -i ../../datasets/UADFV/fake/frames_aug/0037_fake/images/%03d.png -crf 0 -c:v libx264 -vf "fps=30" ./videos/real.mp4

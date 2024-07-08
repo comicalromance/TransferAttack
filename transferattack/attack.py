@@ -49,7 +49,9 @@ class Attack(object):
             model (torch.nn.Module): the surrogate model wrapped by wrap_model in utils.py
         """
         def load_single_model(model_name):
-            if model_name in models.__dict__.keys():
+            if model_name in ['xception']:
+                model = load_xception()
+            elif model_name in models.__dict__.keys():
                 print('=> Loading model {} from torchvision.models'.format(model_name))
                 model = models.__dict__[model_name](weights="DEFAULT")
             elif model_name in timm.list_models():

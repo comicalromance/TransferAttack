@@ -17,6 +17,7 @@ def get_parser():
     parser.add_argument('--alpha', default=1.6 / 255, type=float, help='the stepsize to update the perturbation')
     parser.add_argument('--momentum', default=0., type=float, help='the decay factor for momentum based attack')
     parser.add_argument('--model', default='resnet18', type=str, help='the source surrogate model')
+    parser.add_argument('--workers', default=4, type=int)
     parser.add_argument('--ensemble', action='store_true', help='enable ensemble attack')
     parser.add_argument('--random_start', default=False, type=bool, help='set random start')
     parser.add_argument('--input_dir', default='./data', type=str, help='the path for custom benign images, default: untargeted attack data')
@@ -33,12 +34,12 @@ def main():
         os.makedirs(args.output_dir)
 
     dataset = AdvDataset(input_dir=args.input_dir, output_dir=args.output_dir, targeted=args.targeted, eval=args.eval)
-    dataloader = torch.utils.data.DataLoader(dataset, batch_size=args.batchsize, shuffle=False, num_workers=4)
+    dataloader = torch.utils.data.DataLoader(dataset, batch_size=args.batchsize, shuffle=False, num_workers=args.workers)
 
     if not args.eval:
         if args.ensemble or len(args.model.split(',')) > 1:
             args.model = args.model.split(',')
-        attacker = transferattack.load_attack_class(args.attack)(model_name=args.model, targeted=args.targeted)
+        attacker = transferattack.load_attack_class(args.attack)(model_name=args.model, targeted=args.targeted, epsilon=args.eps, epoch=args.epoch)
 
         for batch_idx, [images, labels, filenames] in tqdm.tqdm(enumerate(dataloader)):
             perturbations = attacker(images, labels)
