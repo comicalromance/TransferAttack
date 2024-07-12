@@ -38,7 +38,7 @@ def load_xception():
         config = yaml.safe_load(f)
 
     model = XceptionDetector(config)
-    ckpt = torch.load(config['weights_path'])
+    ckpt = torch.load(config['weights_path'], map_location=next(model.parameters()).device)
     model.load_state_dict(ckpt, strict=True)
     print('===> Load checkpoint done!')
     return model

@@ -88,7 +88,7 @@ class Attack(object):
         for _ in range(self.epoch):
             # Obtain the output
             logits = self.get_logits(self.transform(data+delta, momentum=momentum))
-
+            
             # Calculate the loss
             loss = self.get_loss(logits, label)
 

@@ -1,5 +1,5 @@
 import torch
-
+import time
 from ..utils import *
 from ..attack import Attack
 
@@ -118,33 +118,42 @@ class GRA(Attack):
         momentum = 0
         for _ in range(self.epoch):
             # Obtain the output
+            print("New Epoch")
+            start_time = time.time()
             logits = self.get_logits(self.transform(data+delta, momentum=momentum))
-
+            print(time.time() - start_time)
+            
             # Calculate the loss
             loss = self.get_loss(logits, label)
-
+            print(time.time() - start_time)
             # Calculate the current gradients
             grad = self.get_grad(loss, delta)
-
+            print(time.time() - start_time)
+        
             # Calculate the average gradients
             samgrad = self.get_average_gradient(data, delta, label, momentum)
-
+            print(time.time() - start_time)
             # Calculate the cosine similarity
             s = self.get_cosine_similarity(grad, samgrad)
+            print(time.time() - start_time)
 
             # Calculate the global weighted gradient
             current_grad = s * grad + (1 - s) * samgrad
+            print(time.time() - start_time)
 
             # Save the previous perturbation
             last_momentum = momentum
 
             # Calculate the momentum
             momentum = self.get_momentum(current_grad, momentum)
+            print(time.time() - start_time)
 
             # Update decay indicator
             M = self.get_decay_indicator(M, delta, momentum, last_momentum, eta)
+            print(time.time() - start_time)
 
             # Update adversarial perturbation
             delta = self.update_delta(delta, data, momentum, M * self.alpha)
+            print(time.time() - start_time)
 
         return delta.detach()

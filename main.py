@@ -13,8 +13,8 @@ def get_parser():
     parser.add_argument('--attack', default='mifgsm', type=str, help='the attack algorithm', choices=transferattack.attack_zoo.keys())
     parser.add_argument('--epoch', default=10, type=int, help='the iterations for updating the adversarial patch')
     parser.add_argument('--batchsize', default=32, type=int, help='the bacth size')
-    parser.add_argument('--eps', default=16 / 255, type=float, help='the stepsize to update the perturbation')
-    parser.add_argument('--alpha', default=1.6 / 255, type=float, help='the stepsize to update the perturbation')
+    parser.add_argument('--eps', default=16, type=float, help='the stepsize to update the perturbation')
+    parser.add_argument('--alpha', default=1.6, type=float, help='the stepsize to update the perturbation')
     parser.add_argument('--momentum', default=0., type=float, help='the decay factor for momentum based attack')
     parser.add_argument('--model', default='resnet18', type=str, help='the source surrogate model')
     parser.add_argument('--workers', default=4, type=int)
@@ -39,7 +39,8 @@ def main():
     if not args.eval:
         if args.ensemble or len(args.model.split(',')) > 1:
             args.model = args.model.split(',')
-        attacker = transferattack.load_attack_class(args.attack)(model_name=args.model, targeted=args.targeted, epsilon=args.eps, epoch=args.epoch)
+        attacker = transferattack.load_attack_class(args.attack)(model_name=args.model, targeted=args.targeted, 
+                                                                 epsilon=args.eps/255, epoch=args.epoch, alpha=args.eps/(args.epoch*255))
 
         for batch_idx, [images, labels, filenames] in tqdm.tqdm(enumerate(dataloader)):
             perturbations = attacker(images, labels)

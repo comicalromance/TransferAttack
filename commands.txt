@@ -1,7 +1,18 @@
-python main.py --input_dir ../../datasets/UADFV/fake/frames_aug/0037_fake --output_dir results --attack mifgsm
+1: Run processVideo.py on a target video, which will process a video into its frames cropped onto the video, and save the frames in the corresponding frames_aug folder along with the csv file containing labels
 
-ffmpeg -r 30 -i ./results/%03d.png -crf 0 -c:v libx264 -vf "fps=30" ./videos/output.mp4 [-pix_fmt yuv420p]
+2: Run command below (python main.py) 
+
+
+
+
+python main.py --input_dir ../../datasets/UADFV/fake/frames_aug/0037_fake --output_dir results --attack mifgsm --model xception --eps 3 --epoch --batchsize
+
+adjust batchsize so it doesnt choke on memory, eps 3 and 6 for roughly 0.01 and 0.02
+
+python main.py --input_dir ../../datasets/UADFV/fake/frames_aug/0037_fake --output_dir results --attack ncs --model xception --eps 3 --batchsize 8
+
+ffmpeg -r 30 -i ./results/%03d.png -crf 0 -c:v libx264 -vf "fps=30" -pix_fmt yuv420p ./videos/output.mp4 
 
 need to use crf 1 for it to be displayable on powerpoint
 
-ffmpeg -r 30 -i ../../datasets/UADFV/fake/frames_aug/0037_fake/images/%03d.png -crf 0 -c:v libx264 -vf "fps=30" ./videos/real.mp4
+ffmpeg -r 30 -i ../../datasets/UADFV/fake/frames_aug/0037_fake/images/%03d.png -crf 0 -c:v libx264 -vf "fps=30" ./videos/real.mp4   
