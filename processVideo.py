@@ -172,7 +172,7 @@ def video_manipulate(
             return
         
         # Get the number of frames in the video
-        frame_count_org = int(cap_org.get(cv2.CAP_PROP_FRAME_COUNT))
+        frame_count_org = min(int(cap_org.get(cv2.CAP_PROP_FRAME_COUNT)), MAX_FRAMES) 
 
         # Get the frame rate of the video by dividing the number of frames by the duration (same interval between frames)
         # frame_idxs = np.arange(0, frame_count_org, stride, dtype=int)
@@ -211,15 +211,18 @@ def video_manipulate(
             save_path_.mkdir(parents=True, exist_ok=True)
 
             # Save cropped face
-            image_path = save_path_ / f"{cnt_frame:03d}.png"
+            image_path_ = save_path_ / 'images'
+            image_path_.mkdir(parents=True, exist_ok=True)
+            image_path = save_path_ / 'images' / f"{cnt_frame:03d}.png"
+            
             if not image_path.is_file():
                 cv2.imwrite(str(image_path), cropped_face)
             file_names.append(f"{cnt_frame:03d}.png")
 
             # Save landmarks
-            land_path = save_path / 'landmarks_aug' / org_path.stem / f"{cnt_frame:03d}.npy"
-            os.makedirs(os.path.dirname(land_path), exist_ok=True)
-            np.save(str(land_path), landmarks)
+            #land_path = save_path / 'landmarks_aug' / org_path.stem / f"{cnt_frame:03d}.npy"
+            #os.makedirs(os.path.dirname(land_path), exist_ok=True)
+            #np.save(str(land_path), landmarks)
 
         # Release the video capture
         cap_org.release()
@@ -230,7 +233,11 @@ def video_manipulate(
         facecrop(movie_path, dataset_path, num_frames, stride, face_predictor, face_detector)
     except Exception as e:
         print(e)
+    
+# Cap each video length to 100 frames   
+MAX_FRAMES = 100
 
-for video_name in videos:
-    # Change the path here!
-    video_manipulate(Path(f'../../datasets/UADFV/fake/{video_name}'), Path('../../datasets/UADFV/fake/'), 1, 1)
+if __name__=="__main__": 
+    video_directory = sys.argv[1]
+    video_name = sys.argv[2]
+    video_manipulate(Path(os.path.join(video_directory, video_name)), Path(video_directory), 1, 1)
