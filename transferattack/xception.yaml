@@ -2,10 +2,10 @@
 log_dir: ./logs/testing_bench
 
 # model setting
-pretrained: ../../DeepfakeBench/training/pretrained/xception-b5690688.pth   # path to a pre-trained model, if using one
+pretrained: ./transferattack/weights/xception-b5690688.pth   # path to a pre-trained model, if using one
 model_name: xception   # model name
 backbone_name: xception  # backbone name
-weights_path: ../../DeepfakeBench/training/weights/xception_best.pth
+weights_path: ./transferattack/weights/xception_best.pth
 
 #backbone setting
 backbone_config:
